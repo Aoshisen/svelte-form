@@ -1,13 +1,14 @@
-<script lang="ts">
-  import { setContext } from "svelte";
+<script lang="ts" module>
   import { createFormStore } from "../store/form";
+  import { setFormStoreContext } from "../helper/form-context";
+</script>
 
-  // 定义组件属性
+<script lang="ts">
   export let initialValues = {};
-  let values = {};
   export let onFormChange: (values: any) => void = () => {};
   export let onFormItemChange: (key: string, value: any) => void = () => {};
-  // 创建表单 store
+
+  let values = {};
   const formStore = createFormStore({
     onFormChange,
     onFormItemChange,
@@ -21,8 +22,7 @@
     values = vals;
   });
 
-  setContext("formStore", formStore);
+  setFormStoreContext(formStore);
 </script>
 
-<!-- Form 组件内容为空，只用于提供 context -->
 <slot />
