@@ -1,3 +1,4 @@
+import { on } from 'svelte/events';
 import { writable, get } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 
@@ -5,13 +6,16 @@ interface FormStore {
 	[k: string]: any
 }
 
-const createFormStore = () => {
+const createFormStore = ({
+	onFormChange = (values: Record<string, any>) => { },
+	onFormItemChange = (key: string, value: any) => { }
+}) => {
 	const store: Writable<FormStore> = writable({});
 	const { subscribe, update } = store;
 	const base_changer = (values: Record<string, any>) => {
 		update(p => ({ ...p, ...values }));
+		return getFormValues();
 	}
-
 	// 获取所有表单值
 	function getFormValues(): Record<string, any> {
 		return get({ subscribe });
@@ -21,10 +25,13 @@ const createFormStore = () => {
 		return values[key];
 	}
 	const setFormValues = (values: Record<string, any>) => {
-		base_changer(values);
+		const newValues = base_changer(values);
+		onFormChange?.(newValues);
 	}
 	const setFormItemValue = (key: string, value: any) => {
-		base_changer({ [key]: value });
+		const newValues = base_changer({ [key]: value });
+		onFormItemChange?.(key, value);
+		onFormChange?.(newValues);
 	}
 
 	return {
