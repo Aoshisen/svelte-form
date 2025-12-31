@@ -1,9 +1,10 @@
 import { getContext, setContext } from 'svelte';
 import type { FormStoreAPI } from '../store/form';
-export function getFormStoreContext(): FormStoreAPI {
-  return getContext('formStore');
-}
 
-export function setFormStoreContext(store: FormStoreAPI): FormStoreAPI {
-  return setContext('formStore', store);
+const KEY = 'formStore';
+export function getFormStoreContext(): FormStoreAPI {
+  return getContext(KEY);
+}
+export function setFormStoreContext<T extends FormStoreAPI>(store: T): T {
+  return setContext(KEY, store);
 }

@@ -1,3 +1,5 @@
+import withError from './withError';
+
 export type Rule = {
   required?: boolean;
   type?: 'number' | 'string' | string;
@@ -61,20 +63,13 @@ export const validateNumber = (rule: Rule, val: any): string | null => {
 export const validateCustom = async (rule: Rule, val: any): Promise<string | null> => {
   if (typeof rule.validator !== 'function') return null;
 
-  try {
-    const res = rule.validator(rule, val);
-    if (res instanceof Promise) {
-      const awaited = await res;
-      if (awaited === false) return rule.message || 'Validation failed';
-      return null;
-    }
-    if (res === false || res === undefined) {
-      return rule.message || 'Validation failed';
-    }
+  const [err, res] = await withError(rule.validator, rule, val);
+
+  if (res && res === true) {
     return null;
-  } catch (e: any) {
-    return e?.message || rule.message || 'Validation error';
   }
+
+  return err?.message || rule.message || 'Validation error';
 };
 
 
