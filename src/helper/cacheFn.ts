@@ -1,4 +1,4 @@
-type CreateCachedAsyncFn = <F extends (...args: any[]) => any>(fn: F) => (...args: Parameters<F>) => Promise<ReturnType<F> | null>;
+type CreateCachedAsyncFn = <F extends (...args: any[]) => any>(fn: F) => (...args: Parameters<F>) => Promise<Awaited<ReturnType<F>> | null>;
 const createCachedAsyncFn: CreateCachedAsyncFn = (fn) => {
 	let cachedData: any = undefined;
 
